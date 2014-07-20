@@ -9,20 +9,31 @@ class MavenParser(Parser):
 		for _, el in it:
 			el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
 		self.xml = it.root
+		self.init_props()
 
+	def init_props(self):
 		self.props = {}
 		for e in self.xml.xpath("//properties/*"):
 			self.props[e.tag] = e.text
 
+	def resolve(self, text):
+		""" Resolves all properties inside given text """
+		for k, v in self.props.iteritems():
+			text = text.replace("${%s}" % k, v)
+		return text
+
 	def parse(self):
 		dependencies = []
-		for e in self.xml.xpath("//dependency"):
+		for e in self.xml.xpath("//dependency|//parent"):
 			try:
+				groupId = self.resolve(e.find("groupId").text)
+				artifactId = self.resolve(e.find("artifactId").text)
+				version = self.resolve(e.find("version").text)
 				dependencies.append({
-					"name": "%s:%s" % (e.find("groupId").text, e.find("artifactId").text),
-					"version": e.find("version").text
+					"name": "%s:%s" % (groupId, artifactId),
+					"version": version
 				})
-			except KeyError:
+			except AttributeError:
 				pass
 		return dependencies
 
