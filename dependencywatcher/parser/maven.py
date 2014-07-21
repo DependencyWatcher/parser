@@ -26,13 +26,14 @@ class MavenParser(Parser):
 		dependencies = []
 		for e in self.xml.xpath("//dependency|//parent"):
 			try:
-				groupId = self.resolve(e.find("groupId").text)
-				artifactId = self.resolve(e.find("artifactId").text)
 				version = self.resolve(e.find("version").text)
-				dependencies.append({
-					"name": "%s:%s" % (groupId, artifactId),
-					"version": version
-				})
+				if not version.endswith("-SNAPSHOT"):
+					groupId = self.resolve(e.find("groupId").text)
+					artifactId = self.resolve(e.find("artifactId").text)
+					dependencies.append({
+						"name": "%s:%s" % (groupId, artifactId),
+						"version": version
+					})
 			except AttributeError:
 				pass
 		return dependencies
