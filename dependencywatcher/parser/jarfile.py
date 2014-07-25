@@ -6,8 +6,7 @@ class JarFileParser(Parser):
 
 	def parse(self):
 		dependencies = []
-		basename = os.path.basename(self.filename)
-		m = JarFileParser.jarfile_re.match(basename)
+		m = JarFileParser.jarfile_re.match(self.source.get_name())
 		if not m is None:
 			dependencies.append({"name": m.group(1), "version": m.group(2)})
 		return dependencies

@@ -3,10 +3,10 @@ from StringIO import StringIO
 from lxml import etree
 
 class MavenParser(Parser):
-	def __init__(self, filename):
-		super(MavenParser, self).__init__(filename)
+	def __init__(self, source):
+		super(MavenParser, self).__init__(source)
 
-		it = etree.iterparse(StringIO(self.get_contents()))
+		it = etree.iterparse(StringIO(source.get_content()))
 		for _, el in it:
 			el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
 		self.xml = it.root

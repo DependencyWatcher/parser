@@ -1,17 +1,30 @@
 import re, os
 
+class FileSource(object):
+	def __init__(self, filename, content=None):
+		self.filename = filename
+		self.content = content
+
+	def get_name(self):
+		""" Returns base name of the source file """
+		try:
+			return self.basename
+		except AttributeError:
+			self.basename = os.path.basename(self.filename)
+		return self.basename
+
+	def get_content(self):
+		if self.content is None:
+			with open(self.filename) as f:
+				self.content = f.read()
+		return self.content
+
+
 class Parser(object):
 	parsers = {}
 
-	def __init__(self, filename):
-		self.filename = filename
-		self.contents = None
-
-	def get_contents(self):
-		if self.contents is None:
-			with open(self.filename) as f:
-				self.contents = f.read()
-		return self.contents
+	def __init__(self, source):
+		self.source = source
 
 	def parse(self):
 		""" Returns list of dependencies required by this file """
@@ -29,9 +42,9 @@ class Parser(object):
 	@staticmethod
 	def get_parsers(filename):
 		""" Returns all compatible parsers for the given filename """
-		basename = os.path.basename(filename)
+		source = FileSource(filename)
 		for pattern, parsers in Parser.parsers.iteritems():
-			if re.match(pattern, basename, re.I):
+			if re.match(pattern, source.get_name(), re.I):
 				for parser in parsers:
-					yield parser(filename)
+					yield parser(source)
 
