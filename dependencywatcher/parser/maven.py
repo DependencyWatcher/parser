@@ -1,27 +1,10 @@
 from dependencywatcher.parser.parser import Parser
-from StringIO import StringIO
-from lxml import etree
+from dependencywatcher.parser.xml import XMLParser
 
-class MavenParser(Parser):
-	def __init__(self, source):
-		super(MavenParser, self).__init__(source)
-
-		it = etree.iterparse(StringIO(source.get_content()))
-		for _, el in it:
-			el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
-		self.xml = it.root
-		self.init_props()
-
-	def init_props(self):
-		self.props = {}
+class MavenParser(XMLParser):
+	def load_vars(self, vars):
 		for e in self.xml.xpath("//properties/*"):
-			self.props[e.tag] = e.text
-
-	def resolve(self, text):
-		""" Resolves all properties inside given text """
-		for k, v in self.props.iteritems():
-			text = text.replace("${%s}" % k, v)
-		return text
+			vars[e.tag] = e.text
 
 	def parse(self):
 		dependencies = []
