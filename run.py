@@ -9,6 +9,10 @@ from dependencywatcher.parser.parser import Parser
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-for p in Parser.get_parsers("/home/michael/Dev/projects/sci-2.0.git/legacy/poller/pom.xml"):
-		print p.parse()
+files = ["/home/michael/.m2/repository/org/log4mongo/log4mongo-java/0.7.4/log4mongo-java-0.7.4.jar",\
+	"/home/michael/Dev/projects/sci-2.0.git/legacy/poller/pom.xml"]
+
+for f in files:
+	for p in Parser.get_parsers(f):
+			print "%s\n\n" % p.parse()
 
