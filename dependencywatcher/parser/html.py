@@ -8,7 +8,9 @@ class HTMLParser(Parser):
 		(re.compile("/ajax.googleapis.com/ajax/libs/([^/]+)/([^/]+)"), ([1, 2])),
 		(re.compile("/cdn.jsdelivr.net/([^/]+)/([^/]+)"), ([1, 2])),
 		(re.compile("/netdna.bootstrapcdn.com/([^/]+)/([^/]+)"), ([1, 2])),
-		(re.compile("/cdnjs.cloudflare.com/ajax/libs/([^/]+)/([^/]+)"), ([1, 2]))
+		(re.compile("/cdnjs.cloudflare.com/ajax/libs/([^/]+)/([^/]+)"), ([1, 2])),
+		(re.compile("/([^/]+)-(\d[^/]+)\.min\.js"), ([1, 2])),
+		(re.compile("/([^/]+)-(\d[^/]+)\.js"), ([1, 2]))
 	]
 
 	def __init__(self, source):
@@ -37,10 +39,9 @@ class HTMLParser(Parser):
 			if dependency:
 				dependencies.append(dependency)
 
-	def parse(self):
-		dependencies = []
+	def parse(self, dependencies):
 		self.find_deps("script", ["src", "data-src"], dependencies)
 		self.find_deps("link", ["href"], dependencies)
-		return dependencies
 
 Parser.register_parser([".*\.html?"], HTMLParser)
+

@@ -26,7 +26,7 @@ class Parser(object):
 	def __init__(self, source):
 		self.source = source
 
-	def parse(self):
+	def parse(self, dependencies):
 		""" Returns list of dependencies required by this file """
 		raise NotImplementedError
 
@@ -47,4 +47,20 @@ class Parser(object):
 			if re.match(pattern, source.get_name(), re.I):
 				for parser in parsers:
 					yield parser(source)
+
+	@staticmethod
+	def filter_dependencies(dependencies):
+		u = {}
+		for dep in dependencies:
+			u["%s-%s" % (dep["name"], dep["version"])] = dep
+		return u.values()
+
+	@staticmethod
+	def parse_dir(dir): 
+		dependencies = []
+		for root, dirs, files in os.walk(dir):
+			for name in files:
+				for p in Parser.get_parsers(os.path.join(root, name)):
+					p.parse(dependencies)
+		return Parser.filter_dependencies(dependencies)
 

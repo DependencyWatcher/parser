@@ -6,8 +6,7 @@ class IvyParser(XMLParser):
 		for e in self.xml.xpath("//property"):
 			vars[e.attrib["name"]] = e.attrib["value"]
 
-	def parse(self):
-		dependencies = []
+	def parse(self, dependencies):
 		for e in self.xml.xpath("/ivy-module/dependencies/dependency"):
 			try:
 				try:
@@ -24,7 +23,6 @@ class IvyParser(XMLParser):
 					})
 			except KeyError:
 				pass
-		return dependencies
 
 Parser.register_parser([".*\.xml"], IvyParser)
 

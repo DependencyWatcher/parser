@@ -6,8 +6,7 @@ class MavenParser(XMLParser):
 		for e in self.xml.xpath("//properties/*"):
 			vars[e.tag] = e.text
 
-	def parse(self):
-		dependencies = []
+	def parse(self, dependencies):
 		for e in self.xml.xpath("//dependency|//parent"):
 			try:
 				version = self.resolve(e.find("version").text)
@@ -20,7 +19,6 @@ class MavenParser(XMLParser):
 					})
 			except AttributeError:
 				pass
-		return dependencies
 
 Parser.register_parser(["pom\.xml"], MavenParser)
 
