@@ -1,5 +1,4 @@
 import re, os
-from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
 
 class FileSource(object):
