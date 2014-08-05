@@ -1,4 +1,6 @@
 import re, os
+from multiprocessing import cpu_count
+from multiprocessing.pool import ThreadPool
 
 class FileSource(object):
 	def __init__(self, filename, content=None):
@@ -22,6 +24,7 @@ class FileSource(object):
 
 class Parser(object):
 	parsers = {}
+	concurrency = 2
 
 	def __init__(self, source):
 		self.source = source
@@ -55,12 +58,24 @@ class Parser(object):
 			u["%s-%s" % (dep["name"], dep["version"])] = dep
 		return u.values()
 
+
+	@staticmethod
+	def parse_file(file):
+		dependencies = []
+		for p in Parser.get_parsers(file):
+			p.parse(dependencies)
+		return dependencies
+
 	@staticmethod
 	def parse_dir(dir): 
+		pool = ThreadPool(processes=Parser.concurrency)
 		dependencies = []
+		def callback(res):
+			dependencies.extend(res)
 		for root, dirs, files in os.walk(dir):
 			for name in files:
-				for p in Parser.get_parsers(os.path.join(root, name)):
-					p.parse(dependencies)
+				pool.apply_async(Parser.parse_file, args = (os.path.join(root, name),), callback = callback)
+		pool.close()
+		pool.join()
 		return Parser.filter_dependencies(dependencies)
 
