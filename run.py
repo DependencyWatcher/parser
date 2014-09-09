@@ -2,7 +2,7 @@
 
 from dependencywatcher.parser.parser import Parser
 
-import logging
+import logging, sys
 logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == "__main__":
