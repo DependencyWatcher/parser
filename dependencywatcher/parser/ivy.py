@@ -4,7 +4,10 @@ from dependencywatcher.parser.xml import XMLParser
 class IvyParser(XMLParser):
 	def load_vars(self, vars):
 		for e in self.xml.xpath("//property"):
-			vars[e.attrib["name"]] = e.attrib["value"]
+			try:
+				vars[e.attrib["name"]] = e.attrib["value"]
+			except KeyError:
+				pass
 
 	def parse(self, dependencies):
 		for e in self.xml.xpath("/ivy-module/dependencies/dependency"):

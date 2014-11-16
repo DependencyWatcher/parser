@@ -43,5 +43,5 @@ class HTMLParser(Parser):
 		self.find_deps("script", ["src", "data-src"], dependencies)
 		self.find_deps("link", ["href"], dependencies)
 
-Parser.register_parser([".*\.html?", ".*\.ftl", ".*\.php[345s]?", ".*\.phtml", ".*\.jsp"], HTMLParser)
+Parser.register_parser([".*\.html?", ".*\.ftl", ".*\.php[345s]?", ".*\.phtml", ".*\.jsp", ".*\.erb"], HTMLParser)
 

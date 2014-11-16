@@ -1,4 +1,4 @@
-import re, os
+import re, os, logging
 from multiprocessing.pool import ThreadPool
 
 class FileSource(object):
@@ -48,7 +48,10 @@ class Parser(object):
 		for pattern, parsers in Parser.parsers.iteritems():
 			if re.match(pattern, source.get_name(), re.I):
 				for parser in parsers:
-					yield parser(source)
+					try:
+						yield parser(source)
+					except:
+						logging.exception("Can't parse file: %s" % filename)
 
 	@staticmethod
 	def filter_dependencies(dependencies):
@@ -73,6 +76,7 @@ class Parser(object):
 			dependencies.extend(res)
 		for root, dirs, files in os.walk(dir):
 			for name in files:
+				#dependencies.extend(Parser.parse_file(os.path.join(root, name)))
 				pool.apply_async(Parser.parse_file, args = (os.path.join(root, name),), callback = callback)
 		pool.close()
 		pool.join()
