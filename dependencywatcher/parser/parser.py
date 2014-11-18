@@ -1,6 +1,8 @@
 import re, os, logging
 from multiprocessing.pool import ThreadPool
 
+logger = logging.getLogger(__name__)
+
 class FileSource(object):
 	def __init__(self, filename, content=None):
 		self.filename = filename
@@ -51,7 +53,7 @@ class Parser(object):
 					try:
 						yield parser(source)
 					except:
-						logging.exception("Can't parse file: %s" % filename)
+						logger.warning("[%s] can't parse file: %s" % (parser.__name__, filename))
 
 	@staticmethod
 	def filter_dependencies(dependencies):
@@ -76,7 +78,6 @@ class Parser(object):
 			dependencies.extend(res)
 		for root, dirs, files in os.walk(dir):
 			for name in files:
-				#dependencies.extend(Parser.parse_file(os.path.join(root, name)))
 				pool.apply_async(Parser.parse_file, args = (os.path.join(root, name),), callback = callback)
 		pool.close()
 		pool.join()
