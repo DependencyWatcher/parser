@@ -22,7 +22,8 @@ class IvyParser(XMLParser):
 					name = self.resolve(e.attrib["name"])
 					dependencies.append({
 						"name": "%s:%s" % (org, name),
-						"version": version
+						"version": version,
+						"context": "java"
 					})
 			except KeyError:
 				pass

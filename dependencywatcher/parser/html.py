@@ -21,7 +21,7 @@ class HTMLParser(Parser):
 		for pattern, order in HTMLParser.patterns:
 			m = pattern.search(href)
 			if m:
-				return {"name": m.group(order[0]), "version": m.group(order[1])}
+				return {"name": m.group(order[0]), "version": m.group(order[1]), "context": "js"}
 		return None
 
 	def get_hrefs(self, tag, attrs):

@@ -17,7 +17,7 @@ class CljProjectParser(Parser):
 	def parse(self, dependencies):
 		data = self.parser.searchString(self.source.get_content())
 		for d in data[0].asList():
-			dependencies.append({"name": d[0].replace("/", ":"), "version": d[1]})
+			dependencies.append({"name": d[0].replace("/", ":"), "version": d[1], "context": "java"})
 
 Parser.register_parser(["project\.clj"], CljProjectParser)
 

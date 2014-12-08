@@ -47,19 +47,19 @@ class Parser(object):
 	def get_parsers(filename):
 		""" Returns all compatible parsers for the given filename """
 		source = FileSource(filename)
-		for pattern, parsers in Parser.parsers.iteritems():
+		for pattern, parser_classes in Parser.parsers.iteritems():
 			if re.match(pattern, source.get_name(), re.I):
-				for parser in parsers:
+				for parser_class in parser_classes:
 					try:
-						yield parser(source)
-					except:
-						logger.warning("[%s] can't parse file: %s" % (parser.__name__, filename))
+						yield parser_class(source)
+					except Exception:
+						logger.warning("[%s] can't parse file: %s" % (parser_class.__name__, filename))
 
 	@staticmethod
 	def filter_dependencies(dependencies):
 		u = {}
 		for dep in dependencies:
-			u["%s-%s" % (dep["name"], dep["version"])] = dep
+			u["%s-%s-%s" % (dep["name"], dep["version"], dep["context"])] = dep
 		return u.values()
 
 

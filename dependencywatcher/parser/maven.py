@@ -21,7 +21,8 @@ class MavenParser(XMLParser):
 					artifactId = self.resolve(e.find("artifactId").text)
 					dependencies.append({
 						"name": "%s:%s" % (groupId, artifactId),
-						"version": version
+						"version": version,
+						"context": "java"
 					})
 			except AttributeError:
 				pass
