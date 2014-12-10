@@ -67,7 +67,10 @@ class Parser(object):
 	def parse_file(file):
 		dependencies = []
 		for p in Parser.get_parsers(file):
-			p.parse(dependencies)
+			try:
+				p.parse(dependencies)
+			except Exception as e:
+				logger.warning("[%s] can't parse file: %s" % (p.__class__.__name__, file))
 		return dependencies
 
 	@staticmethod
