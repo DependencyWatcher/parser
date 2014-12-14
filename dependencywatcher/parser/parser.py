@@ -53,7 +53,7 @@ class Parser(object):
 					try:
 						yield parser_class(source)
 					except Exception as e:
-						logger.exception(e)
+						#logger.exception(e)
 						logger.warning("[%s] can't parse file: %s" % (parser_class.__name__, filename))
 
 	@staticmethod

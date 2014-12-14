@@ -4,7 +4,7 @@ import re, os
 class FileParser(Parser):
 	patterns = [
 		(re.compile("(.*?)[\-\_](\d.*)\.jar", re.I), "java"),
-		(re.compile("(.*?)[\-\_](\d.*?)(\.min)?\.(js|css)", re.I), "js")
+		(re.compile("(.*?)[\-\_](\d+\..*?)(\.min)?\.(js|css)", re.I), "js")
 	]
 
 	def parse(self, dependencies):
