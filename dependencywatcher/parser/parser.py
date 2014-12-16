@@ -71,6 +71,7 @@ class Parser(object):
 			try:
 				p.parse(dependencies)
 			except Exception as e:
+				#logger.exception(e)
 				logger.warning("[%s] can't parse file: %s" % (p.__class__.__name__, file))
 		return dependencies
 

@@ -3,7 +3,7 @@ from dependencywatcher.parser.json import JSONParser
 import re
 
 class NodeJSParser(JSONParser):
-	version_re = [re.compile("^(\d\S+)"), re.compile("\<(\d\S+)")]
+	version_re = [re.compile("^(\d\S+)"), re.compile("\<=?\s*(\d\S+)")]
 
 	def parse(self, dependencies):
 		for f in ["dependencies", "devDependencies"]:
