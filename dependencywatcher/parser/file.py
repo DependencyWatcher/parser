@@ -1,5 +1,5 @@
 from dependencywatcher.parser.parser import Parser
-import re, os
+import re
 
 class FileParser(Parser):
 	patterns = [

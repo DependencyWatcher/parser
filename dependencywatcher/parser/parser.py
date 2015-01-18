@@ -53,7 +53,7 @@ class Parser(object):
 					try:
 						yield parser_class(source)
 					except Exception as e:
-						#logger.exception(e)
+						logger.exception(e)
 						logger.warning("[%s] can't parse file: %s" % (parser_class.__name__, filename))
 
 	@staticmethod
@@ -71,9 +71,10 @@ class Parser(object):
 			try:
 				p.parse(dependencies)
 				for d in dependencies:
-					d["file"] = file
+					if not "file" in d:
+						d["file"] = file
 			except Exception as e:
-				#logger.exception(e)
+				logger.exception(e)
 				logger.warning("[%s] can't parse file: %s" % (p.__class__.__name__, file))
 		return dependencies
 
