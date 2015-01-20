@@ -1,5 +1,5 @@
 from dependencywatcher.parser.parser import Parser
-from lxml import html
+from lxml import html, etree
 from urlparse import urlparse
 import re
 
@@ -18,7 +18,10 @@ class HTMLParser(Parser):
 
 	def __init__(self, source):
 		super(HTMLParser, self).__init__(source)
-		self.root = html.document_fromstring(source.get_content())
+		try:
+			self.root = html.fromstring(source.get_content())
+		except etree.ParserError:
+			self.root = None
 
 	def create_dependency(self, name, version):
 		return {"name": name, "version": version, "context": "js"}
@@ -40,13 +43,14 @@ class HTMLParser(Parser):
 		return []
 
 	def get_hrefs(self, tag, attrs):
-		for e in self.root.xpath("//%s" % tag):
-			for attr in attrs:
-				try:
-					yield e.attrib[attr]
-					break
-				except KeyError:
-					continue
+		if self.root is not None:
+			for e in self.root.xpath("//%s" % tag):
+				for attr in attrs:
+					try:
+						yield e.attrib[attr]
+						break
+					except KeyError:
+						continue
 
 	def find_deps(self, tag, attrs, dependencies):
 		for href in self.get_hrefs(tag, attrs):
