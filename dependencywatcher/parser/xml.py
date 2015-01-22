@@ -10,13 +10,16 @@ class XMLParser(Parser):
 	def __init__(self, source):
 		super(XMLParser, self).__init__(source)
 
-		it = etree.iterparse(StringIO(source.get_content()), resolve_entities=False)
-		for _, el in it:
-			try:
-				el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
-			except IndexError:
-				pass
-		self.xml = it.root
+		try:
+			it = etree.iterparse(StringIO(source.get_content()), resolve_entities=False)
+			for _, el in it:
+				try:
+					el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
+				except IndexError:
+					pass
+			self.xml = it.root
+		except etree.ParseError:
+			self.xml = etree.Element("html")
 		self.vars = {}
 		self.load_vars(self.vars)
 
