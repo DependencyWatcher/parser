@@ -1,5 +1,6 @@
 import re, os, logging
 from multiprocessing.pool import ThreadPool
+from pkg_resources import parse_version
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class FileSource(object):
 class Parser(object):
 	parsers = {}
 	concurrency = 2
+	blacklist_dirs = [".git", ".svn"]
 
 	def __init__(self, source):
 		self.source = source
@@ -63,6 +65,23 @@ class Parser(object):
 			u["%s-%s-%s" % (dep["name"], dep["version"], dep["context"])] = dep
 		return u.values()
 
+	@staticmethod
+	def get_max_version(version_specifiers):
+		""" Chooses max version defined in version specifiers list.
+			For instance, if the list contains: [('>=', '1.6'), ('<', '1.8')]
+			then max version will be: 1.8
+		"""
+		max_version = None
+		max_version_parsed = None
+		for specifier in version_specifiers:
+			op = specifier[0]
+			version = specifier[1]
+			version_parsed = parse_version(version)
+			if op in ["==", "===", "<=", "<"]:
+				if not max_version_parsed or max_version_parsed and version_parsed > max_version_parsed:
+					max_version = version
+					max_version_parsed = version_parsed
+		return max_version
 
 	@staticmethod
 	def parse_file(file):
@@ -85,6 +104,9 @@ class Parser(object):
 		def callback(res):
 			dependencies.extend(res)
 		for root, dirs, files in os.walk(dir):
+			for bl in Parser.blacklist_dirs:
+				if bl in dirs:
+					dirs.remove(bl)
 			for name in files:
 				pool.apply_async(Parser.parse_file, args = (os.path.join(root, name),), callback = callback)
 		pool.close()
