@@ -15,14 +15,16 @@ class MavenParser(XMLParser):
 	def parse(self, dependencies):
 		for e in self.xml.xpath("//dependency|//parent"):
 			try:
-				version = self.resolve(e.find("version").text)
+				version_elem = e.find("version")
+				version = self.resolve(version_elem.text)
 				if not version.endswith("-SNAPSHOT") and not XMLParser.RE_VAR.match(version):
 					groupId = self.resolve(e.find("groupId").text)
 					artifactId = self.resolve(e.find("artifactId").text)
 					dependencies.append({
 						"name": "%s:%s" % (groupId, artifactId),
 						"version": version,
-						"context": "java"
+						"context": "java",
+						"line": version_elem.sourceline
 					})
 			except AttributeError:
 				pass

@@ -19,7 +19,7 @@ class RequirementsTxtParser(Parser):
 		return Parser.get_max_version(version_specifiers)
 
 	def _parse_requirements_txt_file(self, source, dependencies):
-		for l in source.get_content().splitlines():
+		for line_number, l in enumerate(source.get_content().splitlines()):
 			m = self.re_include.search(l)
 			if m is not None:
 				include_file = m.group(1)
@@ -32,7 +32,7 @@ class RequirementsTxtParser(Parser):
 					dep_name = m.group(1)
 					version = self._parse_restrictions(m.group(2))
 					if version is not None:
-						dependencies.append({"name": dep_name, "version": version, "context": "python"})
+						dependencies.append({"name": dep_name, "version": version, "context": "python", "line": line_number + 1})
 
 	def parse(self, dependencies):
 		self._parse_requirements_txt_file(self.source, dependencies)

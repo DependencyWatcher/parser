@@ -23,21 +23,21 @@ class HTMLParser(Parser):
 		except etree.ParserError:
 			self.root = None
 
-	def create_dependency(self, name, version):
-		return {"name": name, "version": version, "context": "js"}
+	def create_dependency(self, name, version, line):
+		return {"name": name, "version": version, "context": "js", "line": line}
 
-	def parse_href(self, href):
+	def parse_href(self, href, line):
 		for pattern, order in HTMLParser.patterns:
 			m = pattern.search(href)
 			if m:
-				return [self.create_dependency(m.group(order[0]), m.group(order[1]))]
+				return [self.create_dependency(m.group(order[0]), m.group(order[1]), line)]
 
 		for href_pattern, dep_pattern in HTMLParser.inline_patterns:
 			m = href_pattern.search(href)
 			if m:
 				inline_deps = []
 				for m2 in dep_pattern.finditer(m.group(1)):
-					inline_deps.append(self.create_dependency(m2.group(1), m2.group(2)))
+					inline_deps.append(self.create_dependency(m2.group(1), m2.group(2), line))
 				if len(inline_deps) > 0:
 					return inline_deps
 		return []
@@ -47,14 +47,14 @@ class HTMLParser(Parser):
 			for e in self.root.xpath("//%s" % tag):
 				for attr in attrs:
 					try:
-						yield e.attrib[attr]
+						yield e.attrib[attr], e.sourceline
 						break
 					except KeyError:
 						continue
 
 	def find_deps(self, tag, attrs, dependencies):
-		for href in self.get_hrefs(tag, attrs):
-			dependencies.extend(self.parse_href(href))
+		for href, line in self.get_hrefs(tag, attrs):
+			dependencies.extend(self.parse_href(href, line))
 
 	def parse(self, dependencies):
 		self.find_deps("script", ["src", "data-src"], dependencies)

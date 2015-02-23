@@ -59,13 +59,6 @@ class Parser(object):
 						logger.warning("[%s] can't parse file: %s" % (parser_class.__name__, filename))
 
 	@staticmethod
-	def filter_dependencies(dependencies):
-		u = {}
-		for dep in dependencies:
-			u["%s-%s-%s" % (dep["name"], dep["version"], dep["context"])] = dep
-		return u.values()
-
-	@staticmethod
 	def get_max_version(version_specifiers):
 		""" Chooses max version defined in version specifiers list.
 			For instance, if the list contains: [('>=', '1.6'), ('<', '1.8')]
@@ -111,5 +104,5 @@ class Parser(object):
 				pool.apply_async(Parser.parse_file, args = (os.path.join(root, name),), callback = callback)
 		pool.close()
 		pool.join()
-		return Parser.filter_dependencies(dependencies)
+		return dependencies
 

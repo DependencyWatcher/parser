@@ -23,7 +23,8 @@ class IvyParser(XMLParser):
 					dependencies.append({
 						"name": "%s:%s" % (org, name),
 						"version": version,
-						"context": "java"
+						"context": "java",
+						"line": e.sourceline
 					})
 			except KeyError:
 				pass
