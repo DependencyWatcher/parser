@@ -9,8 +9,8 @@ class CljProjectParser(PyParser):
 
         Comment = Regex(r";.*")
         UnquotedArg = Word(alphanums + "-/.")
-        QuotedArg = Suppress(Literal("\"")) + UnquotedArg + Suppress(Literal("\"")) \
-            | Suppress(Literal("'")) + UnquotedArg + Suppress(Literal("'"))
+        QuotedArg = Suppress(Literal("\"")) + Regex(r"[^\"]*") + Suppress(Literal("\"")) \
+            | Suppress(Literal("'")) + Regex(r"[^']*") + Suppress(Literal("'"))
         CljKeyword = Suppress(Literal(":")) + Word(alphanums + "-._")
         List = Forward()
         ArgList = Forward()
