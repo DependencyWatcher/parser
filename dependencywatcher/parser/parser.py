@@ -78,10 +78,14 @@ class Parser(object):
     @staticmethod
     def load_ignores(dir):
         ignorefile = os.path.join(dir, ".dwignore")
+        ignores = []
         if os.path.exists(ignorefile):
-            with open(ignorefile) as f:
-                return f.read().splitlines()
-        return []
+            with open(ignorefile, "r") as f:
+                for line in f:
+                    line = re.sub(r"#.*", "", line).strip()
+                    if (len(line) > 0):
+                        ignores.append(line)
+        return ignores
 
     @staticmethod
     def parse_file(file):
