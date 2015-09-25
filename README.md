@@ -11,8 +11,8 @@ The parser supports file `.dwignore`, which must be placed in the project root, 
 
 Example:
 
-   # Ignore tests folder and all of its contents:
-   tests/
-   # Ignore .txt files
-   *.txt
+    # Ignore tests folder and all of its contents:
+    tests/
+    # Ignore .txt files
+    *.txt
 
