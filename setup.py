@@ -15,6 +15,7 @@ setup(
 	zip_safe=False,
 	install_requires=[
 		"lxml",
-                "pyparsing"
+                "pyparsing",
+                "scandir"
 	]
 )

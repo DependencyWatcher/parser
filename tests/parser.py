@@ -14,7 +14,8 @@ class ParserTest(unittest.TestCase):
 
     def assertParsable(self, project_dir, num_dependencies):
         parsed_info = Parser.parse_dir(os.path.join(os.path.dirname(__file__), "projects", project_dir))
-        self.assertEquals(num_dependencies, len(parsed_info), "Not all dependencies could be found in %s" % project_dir)
+        self.assertEquals(num_dependencies, len(parsed_info),
+                "%s: number of dependencies doesn't match (expected: %d, actual: %d)" % (project_dir, num_dependencies, len(parsed_info)))
         for i in parsed_info:
             self.assertHasAllInfo(i)
 
